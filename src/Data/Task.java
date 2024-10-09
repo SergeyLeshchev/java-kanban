@@ -1,3 +1,5 @@
+package Data;
+
 import java.util.Objects;
 
 public class Task {
@@ -5,6 +7,12 @@ public class Task {
     private String description;
     private int idOfTask;
     private Status status;
+
+    public Task(String title, String description, Status status) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+    }
 
     public String getTitle() {
         return title;
@@ -40,7 +48,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return this.getClass() + "{" +
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", idOfTask=" + idOfTask +
@@ -61,10 +69,6 @@ public class Task {
 
     @Override
     public int hashCode() {
-        int hash = 17;
-        hash += Objects.hash(title, description);
-        hash *= 31;
-        hash += Objects.hash(idOfTask, status);
-        return hash;
+        return Objects.hash(title, description, idOfTask, status);
     }
 }
