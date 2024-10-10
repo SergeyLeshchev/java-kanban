@@ -1,8 +1,8 @@
-import Data.Epic;
-import Data.Status;
-import Data.Subtask;
-import Data.Task;
-import TaskManager.TaskManager;
+import data.Epic;
+import data.Status;
+import data.Subtask;
+import data.Task;
+import taskManager.TaskManager;
 
 public class Main {
     public static void main(String[] args) {
@@ -42,16 +42,16 @@ public class Main {
         taskManager.updateSubtask(subtask3);
 
         System.out.println();
-        System.out.println(taskManager.getTaskByID(1));
-        System.out.println(taskManager.getTaskByID(2));
-        System.out.println(taskManager.getEpicByID(3));
-        System.out.println(taskManager.getSubtaskByID(4));
-        System.out.println(taskManager.getSubtaskByID(5));
-        System.out.println(taskManager.getEpicByID(6));
-        System.out.println(taskManager.getSubtaskByID(7));
+        System.out.println(taskManager.getTaskById(1));
+        System.out.println(taskManager.getTaskById(2));
+        System.out.println(taskManager.getEpicById(3));
+        System.out.println(taskManager.getSubtaskById(4));
+        System.out.println(taskManager.getSubtaskById(5));
+        System.out.println(taskManager.getEpicById(6));
+        System.out.println(taskManager.getSubtaskById(7));
 
         System.out.println();
-        System.out.println(taskManager.getSubtasksOfEpic(taskManager.getEpicByID(3)));
+        System.out.println(taskManager.getSubtasksOfEpic(taskManager.getEpicById(3)));
 
         //taskManager.removeTask(2);
         //taskManager.removeEpic(3);
@@ -59,7 +59,7 @@ public class Main {
 
         //System.out.println(taskManager.getAllTasks());
 
-        //System.out.println(taskManager.getEpicByID(6));
+        //System.out.println(taskManager.getEpicById(6));
 
         //taskManager.removeAllTasks();
         //taskManager.removeAllEpics();
@@ -67,6 +67,12 @@ public class Main {
 
         System.out.println("Все задачи:");
         for (Object o : taskManager.getAllTasks()) {
+            System.out.println(o);
+        }
+        for (Object o : taskManager.getAllEpics()) {
+            System.out.println(o);
+        }
+        for (Object o : taskManager.getAllSubtasks()) {
             System.out.println(o);
         }
         for (Subtask subtask : taskManager.getSubtasksOfEpic(epic1)) {
