@@ -2,7 +2,7 @@ import data.Epic;
 import data.Status;
 import data.Subtask;
 import data.Task;
-import taskManager.TaskManager;
+import manager.TaskManager;
 
 public class Main {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package taskManager;
+package manager;
 
 import data.Epic;
 import data.Status;
@@ -87,21 +87,15 @@ public class TaskManager {
     }
 
     public ArrayList<Task> getAllTasks() {
-        ArrayList<Task> allTasksList = new ArrayList<>(taskCollection.size());
-        allTasksList.addAll(taskCollection.values());
-        return allTasksList;
+        return new ArrayList<>(taskCollection.values());
     }
 
     public ArrayList<Epic> getAllEpics() {
-        ArrayList<Epic> allEpicsList = new ArrayList<>(epicCollection.size());
-        allEpicsList.addAll(epicCollection.values());
-        return allEpicsList;
+        return new ArrayList<>(epicCollection.values());
     }
 
     public ArrayList<Subtask> getAllSubtasks() {
-        ArrayList<Subtask> allSubtasksList = new ArrayList<>(subtaskCollection.size());
-        allSubtasksList.addAll(subtaskCollection.values());
-        return allSubtasksList;
+        return new ArrayList<>(subtaskCollection.values());
     }
 
     public void removeAllTasks() {
