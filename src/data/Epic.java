@@ -18,6 +18,11 @@ public class Epic extends Task {
         this.subtasksIds = subtasksIds;
     }
 
+    // Этот метод написан для альтернативной реализации
+    public Epic copy(Epic epic) {
+        return new Epic(epic.getTitle(), epic.getDescription(), epic.getStatus(), epic.subtasksIds, epic.getIdOfTask());
+    }
+
     public ArrayList<Integer> getSubtasksIds() {
         return subtasksIds;
     }

@@ -45,6 +45,11 @@ public class Task {
         this.status = status;
     }
 
+    // Этот метод написан для альтернативной реализации
+    public Task copy(Task task) {
+        return new Task(task.title, task.description, task.status, task.idOfTask);
+    }
+
     @Override
     public String toString() {
         return this.getClass() + "{" +
@@ -55,18 +60,16 @@ public class Task {
                 '}';
     }
 
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         return idOfTask == task.idOfTask;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, description, idOfTask, status);
+        return Objects.hash(idOfTask);
     }
 }

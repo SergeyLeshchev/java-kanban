@@ -1,35 +1,45 @@
 package manager;
 
-import data.Epic;
-import data.Subtask;
 import data.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private final ArrayList<Task> history = new ArrayList<>(10);
+    private final int CAPACITY_HISTORY = 10;
+    private final List<Task> history = new ArrayList<>();
+    // Можно раскомментировать эту часть, закомментировать остальной код и проверить как работает
+    // альтернативная реализация
+/*
+    @Override
+    public void addTaskInHistory(Task task) {
+        if (task == null) {
+            return;
+        }
+        if (history.size() == CAPACITY_HISTORY) {
+            history.removeFirst();
+        }
+        history.add(task.copy(task));
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        return history;
+    }
+*/
 
     @Override
     public void addTaskInHistory(Task task) {
-
-        Task newTask;
-        if (task.getClass() == Task.class) {
-            newTask = new Task(task.getTitle(), task.getDescription(), task.getStatus(), task.getIdOfTask());
-        } else if (task.getClass() == Epic.class) {
-            newTask = new Epic(task.getTitle(), task.getDescription(), task.getStatus(), ((Epic) task).getSubtasksIds(), task.getIdOfTask());
-        } else {
-            newTask = new Subtask(task.getTitle(), task.getDescription(), task.getStatus(), ((Subtask) task).getEpicId(), task.getIdOfTask());
-        }
-
-        if (history.size() > 9) {
+        history.add(task);
+        if (history.size() > CAPACITY_HISTORY) {
             history.removeFirst();
         }
-        history.add(newTask);
     }
 
     @Override
-    public ArrayList<Task> getHistory() {
-        return history;
+    public List<Task> getHistory() {
+        return List.copyOf(history);
     }
+
 }

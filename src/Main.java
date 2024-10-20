@@ -7,8 +7,8 @@ import manager.TaskManager;
 
 public class Main {
     public static void main(String[] args) {
-        TaskManager taskManager = Managers.getDefault();
-
+        TaskManager taskManager = Managers.getDefaultTaskManager();
+/*
         Task task1 = new Task("Задача 1", "Описание задачи 1", Status.NEW);
         taskManager.addTask(task1);
 
@@ -92,24 +92,22 @@ public class Main {
         for (Task task : taskManager.getHistory()) {
             System.out.println(task);
         }
-
+*/
         Task task3 = new Task("task3", "task3 description", Status.NEW);
         taskManager.addTask(task3);
-        taskManager.getTask(8).setStatus(Status.IN_PROGRESS);
-        taskManager.getTask(8);
-
+        taskManager.getTask(1);
+        taskManager.getTask(1).setStatus(Status.IN_PROGRESS);
+        taskManager.getTask(1);
 
         Epic epic3 = new Epic("Эпик 3", "Описание эпика 3", Status.NEW);
         taskManager.addEpic(epic3);
-        //taskManager.getEpic(9).setStatus(Status.DONE);
-        taskManager.getEpic(9);
+        taskManager.getEpic(2);
 
-        Subtask subtask4 = new Subtask("Подзадача 4", "Описание подзадачи 4", Status.DONE, epic1.getIdOfTask());
+        Subtask subtask4 = new Subtask("Подзадача 4", "Описание подзадачи 4", Status.DONE, epic3.getIdOfTask());
         taskManager.addSubtask(subtask4);
-        taskManager.getSubtask(10).setStatus(Status.IN_PROGRESS);
-        taskManager.getSubtask(10);
-        taskManager.getEpic(9);
-
+        taskManager.getSubtask(3).setStatus(Status.IN_PROGRESS);
+        taskManager.getSubtask(3);
+        taskManager.getEpic(2);
 
         System.out.println("История:");
         for (Task task : taskManager.getHistory()) {

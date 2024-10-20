@@ -7,15 +7,24 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
-    TaskManager taskManager = Managers.getDefault();
+    HistoryManager historyManager = Managers.getDefaultHistoryManager();
+    Task task = new Task("task1", "task1 description", Status.NEW);
 
     @Test
-    void historySavedOldVersionOfTheTaskTest() {
-        Task task1 = new Task("task1", "task1 description", Status.NEW);
-        taskManager.addTask(task1);
-        taskManager.getTask(1);
-        taskManager.getTask(1).setStatus(Status.IN_PROGRESS);
-        taskManager.getHistory();
+    void addTaskInHistoryAndGetHistoryTest() {
+        historyManager.addTaskInHistory(task);
+        Task task1 = historyManager.getHistory().getFirst();
+        assertEquals(task, task1, "addTaskInHistory or getHistory not works correctly");
     }
 
+    @Test
+    void historyCapacityTest() {
+        // Здесь я бы хотел вместо 20 подставлять выражение (CAPACITY_HISTORY + 10),
+        // но я не знаю как получить константу так, чтобы не менять структуру программы слишком сильно.
+        // Я надеюсь это будет некритичным замечанием)
+        for (int i = 0; i < 20; i++) {
+            historyManager.addTaskInHistory(task);
+        }
+        assertEquals(10, historyManager.getHistory().size(), "history capacity is not equal to 10");
+    }
 }
