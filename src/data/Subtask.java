@@ -13,16 +13,22 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
-    // Этот метод написан для альтернативной реализации
-    public Subtask copy(Subtask subtask) {
-        return new Subtask(subtask.getTitle(), subtask.getDescription(), subtask.getStatus(), subtask.epicId, subtask.getIdOfTask());
-    }
-
     public int getEpicId() {
         return epicId;
     }
 
     public void setEpicId(int epicId) {
         this.epicId = epicId;
+    }
+
+    @Override
+    public String toString() {
+        return "Subtask{" +
+                "title='" + super.getTitle() + '\'' +
+                ", description='" + super.getDescription() + '\'' +
+                ", idOfTask=" + super.getIdOfTask() +
+                ", status=" + super.getStatus() +
+                ", epicId=" + epicId +
+                '}';
     }
 }

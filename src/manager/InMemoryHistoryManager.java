@@ -3,15 +3,12 @@ package manager;
 import data.Task;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
     private final int CAPACITY_HISTORY = 10;
-    private final List<Task> history = new ArrayList<>();
-    // Можно раскомментировать эту часть, закомментировать остальной код и проверить как работает
-    // альтернативная реализация
-/*
+    private final ArrayList<Task> history = new ArrayList<>();
+
     @Override
     public void addTaskInHistory(Task task) {
         if (task == null) {
@@ -20,26 +17,11 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (history.size() == CAPACITY_HISTORY) {
             history.removeFirst();
         }
-        history.add(task.copy(task));
+        history.add(task);
     }
 
     @Override
-    public List<Task> getHistory() {
+    public ArrayList<Task> getHistory() {
         return history;
     }
-*/
-
-    @Override
-    public void addTaskInHistory(Task task) {
-        history.add(task);
-        if (history.size() > CAPACITY_HISTORY) {
-            history.removeFirst();
-        }
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return List.copyOf(history);
-    }
-
 }

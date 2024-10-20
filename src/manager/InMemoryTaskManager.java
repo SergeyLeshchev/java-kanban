@@ -7,9 +7,8 @@ import data.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-public class InMemoryTaskManager extends Managers implements TaskManager {
+public class InMemoryTaskManager implements TaskManager {
 
     private final HistoryManager historyManager = Managers.getDefaultHistoryManager();
     private final HashMap<Integer, Task> taskCollection = new HashMap<>();
@@ -184,7 +183,7 @@ public class InMemoryTaskManager extends Managers implements TaskManager {
     }
 
     @Override
-    public List<Task> getHistory() {
+    public ArrayList<Task> getHistory() {
         return historyManager.getHistory();
     }
 }

@@ -45,14 +45,9 @@ public class Task {
         this.status = status;
     }
 
-    // Этот метод написан для альтернативной реализации
-    public Task copy(Task task) {
-        return new Task(task.title, task.description, task.status, task.idOfTask);
-    }
-
     @Override
     public String toString() {
-        return this.getClass() + "{" +
+        return "Task{" +
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", idOfTask=" + idOfTask +

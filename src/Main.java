@@ -71,7 +71,6 @@ public class Main {
             System.out.println(subtask);
         }
 
-
         taskManager.getTask(1);
         taskManager.getTask(2);
         taskManager.getEpic(3);
