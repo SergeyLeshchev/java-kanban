@@ -44,7 +44,6 @@ class InMemoryTaskManagerTest {
     }
 
 
-
     @Test
     void updateTaskTest() {
         taskManager.addTask(task);
@@ -199,7 +198,7 @@ class InMemoryTaskManagerTest {
         taskManager.getSubtask(2).setStatus(Status.IN_PROGRESS);
         taskManager.removeSubtask(3);
         assertEquals(Status.IN_PROGRESS, taskManager.getEpic(1).getStatus(),
-        "epic status is not equal IN_PROGRESS, when there is subtask IN_PROGRESS after method removeSubtask()");
+                "epic status is not equal IN_PROGRESS, when there is subtask IN_PROGRESS after method removeSubtask()");
 
         taskManager.removeAllSubtasks();
         assertEquals(Status.NEW, taskManager.getEpic(1).getStatus(),
@@ -222,7 +221,7 @@ class InMemoryTaskManagerTest {
         taskManager.addSubtask(subtask4);
 
         boolean condition = (subtask3.equals(taskManager.getSubtasksOfEpic(epic2).get(0)) &&
-                             subtask4.equals(taskManager.getSubtasksOfEpic(epic2).get(1)));
+                subtask4.equals(taskManager.getSubtasksOfEpic(epic2).get(1)));
         assertTrue(condition, "getSubtasksOfEpic() not work correctly");
     }
 
@@ -236,8 +235,8 @@ class InMemoryTaskManagerTest {
         taskManager.getSubtask(3);
 
         boolean condition = (taskManager.getHistory().get(0).equals(task) &&
-                             taskManager.getHistory().get(1).equals(epic) &&
-                             taskManager.getHistory().get(2).equals(subtask));
+                taskManager.getHistory().get(1).equals(epic) &&
+                taskManager.getHistory().get(2).equals(subtask));
         assertTrue(condition, "getHistoryTest() not work correctly");
     }
 }
