@@ -1,6 +1,5 @@
 package manager;
 
-import data.Node;
 import data.Task;
 
 import java.util.ArrayList;
@@ -8,79 +7,85 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
-
-    private final Map<Integer, Node<Task>> mapForHistory = new HashMap<>();
-    private final LinkedListForHistory<Task> linkedListForHistory = new LinkedListForHistory<>();
+    private final LinkedListForHistory linkedListForHistory = new LinkedListForHistory();
 
     @Override
     public void addTaskInHistory(Task task) {
         if (task == null) {
             return;
         }
-        if (mapForHistory.containsKey(task.getIdOfTask())) {
-            linkedListForHistory.removeNode(mapForHistory.get(task.getIdOfTask()));
-        }
-        Node<Task> newNode = linkedListForHistory.linkLast(task);
-        mapForHistory.put(task.getIdOfTask(), newNode);
+        linkedListForHistory.removeNode(linkedListForHistory.mapForHistory.get(task.getIdOfTask()));
+        Node newNode = linkedListForHistory.linkLast(task);
+        linkedListForHistory.mapForHistory.put(task.getIdOfTask(), newNode);
     }
 
     @Override
     public void remove(int id) {
-        linkedListForHistory.removeNode(mapForHistory.get(id));
-        mapForHistory.remove(id);
-    }
-
-    private ArrayList<Task> getTasks() {
-        ArrayList<Task> history = new ArrayList<>();
-        Node<Task> node = linkedListForHistory.first;
-        while (history.size() != linkedListForHistory.size) {
-            history.add(node.getTask());
-            node = node.getNext();
-        }
-        return history;
+        linkedListForHistory.removeNode(linkedListForHistory.mapForHistory.get(id));
+        linkedListForHistory.mapForHistory.remove(id);
     }
 
     @Override
     public ArrayList<Task> getHistory() {
-        return getTasks();
+        return linkedListForHistory.getTasks();
     }
 
-    public class LinkedListForHistory<T> {
-        private int size = 0;
-        private Node<T> first;
-        private Node<T> last;
+    public class LinkedListForHistory {
+        private final Map<Integer, Node> mapForHistory = new HashMap<>();
 
-        private Node<T> linkLast(T task) {
-            Node<T> newNode = new Node<>(task);
-            if (size > 0) {
-                newNode.setPrev(last);
-                last.setNext(newNode);
-            } else {
+        private Node first;
+        private Node last;
+
+        private Node linkLast(Task task) {
+            Node newNode = new Node(task, last, null);
+            if (first == null) {
                 first = newNode;
+            } else {
+                last.next = newNode;
             }
             last = newNode;
-            size++;
             return newNode;
         }
 
-        private void removeNode(Node<T> node) {
+        private void removeNode(Node node) {
             if (node == null) {
                 return;
             }
-            if (size == 1) {
+            if (node == first && node == last) {
                 first = null;
                 last = null;
-            } else if (node.getNext() == null) { // Если node - хвост
-                node.getPrev().setNext(null);
-                last = node.getPrev();
-            } else if (node.getPrev() == null) { // Если node - голова
-                node.getNext().setPrev(null);
-                first = node.getNext();
+            } else if (node.next == null) { // Если node - хвост
+                node.prev.next = null;
+                last = node.prev;
+            } else if (node.prev == null) { // Если node - голова
+                node.next.prev = null;
+                first = node.next;
             } else {
-                node.getNext().setPrev(node.getPrev());
-                node.getPrev().setNext(node.getNext());
+                node.next.prev = node.prev;
+                node.prev.next = node.next;
             }
-            size--;
+        }
+
+        private ArrayList<Task> getTasks() {
+            ArrayList<Task> history = new ArrayList<>();
+            Node node = linkedListForHistory.first;
+            while (node != null) {
+                history.add(node.task);
+                node = node.next;
+            }
+            return history;
+        }
+    }
+
+    public static class Node {
+        private final Task task;
+        private Node next;
+        private Node prev;
+
+        public Node(Task task, Node prev, Node next) {
+            this.task = task;
+            this.prev = prev;
+            this.next = next;
         }
     }
 }

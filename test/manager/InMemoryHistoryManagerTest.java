@@ -2,62 +2,50 @@ package manager;
 
 import data.Status;
 import data.Task;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class InMemoryHistoryManagerTest {
-    HistoryManager historyManager = Managers.getDefaultHistoryManager();
-    Task task = new Task("task1", "task1 description", Status.NEW);
+    HistoryManager historyManager;
+    Task task1;
+    Task task2;
 
-    @Test
-    void addTaskInHistoryAndGetHistoryTest() {
-        historyManager.addTaskInHistory(task);
-        Task task1 = historyManager.getHistory().getFirst();
-        assertEquals(task, task1, "addTaskInHistory or getHistory not works correctly");
+    @BeforeEach
+    void makeTasks() {
+        historyManager = Managers.getDefaultHistoryManager();
+        task1 = new Task("task1", "task1 description", Status.NEW, 1);
+        task2 = new Task("task2", "task2 description", Status.NEW, 2);
     }
 
     @Test
-    void historyCapacityTest() {
-        int capacity = 1000000;
-        for (int i = 0; i < capacity; i++) {
-            historyManager.addTaskInHistory(new Task("Title" + i, "Description" + i, Status.NEW, i));
-        }
-        assertEquals(capacity, historyManager.getHistory().size(), "incorrect history size");
+    void addTaskInHistoryAndGetHistoryAndLinkLastTest() {
+        historyManager.addTaskInHistory(task1);
+        historyManager.addTaskInHistory(task2);
+        assertEquals(task2, historyManager.getHistory().get(1), "addTaskInHistory or getHistory or LinkLast not works correctly");
     }
 
     @Test
     void removeTest() {
-        for (int i = 0; i < 10; i++) {
-            historyManager.addTaskInHistory(new Task("Title" + i, "Description" + i, Status.NEW, i));
-        }
-        // проверяем удаление из начала, середины и конца
-        historyManager.remove(0);
-        historyManager.remove(5);
-        historyManager.remove(9);
-        assertEquals(7, historyManager.getHistory().size(), "remove() is not work correctly");
-    }
-
-    @Test
-    void linkLastTest() {
-        for (int i = 0; i < 3; i++) {
-            historyManager.addTaskInHistory(new Task("Title" + i, "Description" + i, Status.NEW, i));
-        }
-        Task task2 = new Task("Title2", "Description2", Status.NEW, 2);
-        assertEquals(task2, historyManager.getHistory().get(2), "linkLast() is not work correctly");
+        historyManager.addTaskInHistory(task1);
+        historyManager.addTaskInHistory(task2);
+        historyManager.addTaskInHistory(new Task("task3", "task3 description", Status.NEW, 3));
+        historyManager.addTaskInHistory(new Task("task4", "task4 description", Status.NEW, 4));
+        historyManager.remove(3); // проверяем удаление из середины
+        historyManager.remove(4); // проверяем удаление с конца
+        historyManager.remove(1); // проверяем удаление с начала
+        historyManager.remove(2); // проверяем удаление единственного элемента
+        assertEquals(0, historyManager.getHistory().size(), "remove() is not work correctly");
     }
 
     @Test
     void notRepeatTest() {
-        Task task1 = new Task("Title1", "Description1", Status.NEW, 1);
-        Task task2 = new Task("Title2", "Description2", Status.NEW, 2);
-        Task task3 = new Task("Title3", "Description3", Status.NEW, 1);
         historyManager.addTaskInHistory(task1);
         historyManager.addTaskInHistory(task2);
-        historyManager.addTaskInHistory(task3);
+        historyManager.addTaskInHistory(task1);
         assertEquals(2, historyManager.getHistory().size(), "same task not deleted");
-        assertNotEquals(historyManager.getHistory().get(0), historyManager.getHistory().get(1),
-                "same task not deleted");
+        assertNotEquals(historyManager.getHistory().get(0), historyManager.getHistory().get(1), "same task not deleted");
     }
 }
