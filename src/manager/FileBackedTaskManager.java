@@ -10,43 +10,29 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private File savedTasks;
+    private final File savedTasks;
 
     public static void main(String[] args) {
-        File taskStorage = null;
-        try {
-            taskStorage = new File("taskStorage.txt");
-            FileBackedTaskManager taskManager = new FileBackedTaskManager(taskStorage);
+        File taskStorage = new File("taskStorage.txt");
+        FileBackedTaskManager taskManager = new FileBackedTaskManager(taskStorage);
+        Task task1 = new Task("Задача 1", "Описание задачи 1", Status.NEW);
+        taskManager.addTask(task1);
+        Epic epic1 = new Epic("Эпик 1", "Описание эпика 1", Status.NEW);
+        taskManager.addEpic(epic1);
+        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", Status.NEW, epic1.getIdOfTask());
+        taskManager.addSubtask(subtask1);
 
-            Task task1 = new Task("Задача 1", "Описание задачи 1", Status.NEW);
-            taskManager.addTask(task1);
-            Epic epic1 = new Epic("Эпик 1", "Описание эпика 1", Status.NEW);
-            taskManager.addEpic(epic1);
-            Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", Status.NEW, epic1.getIdOfTask());
-            taskManager.addSubtask(subtask1);
-
-            FileBackedTaskManager taskManager2 = FileBackedTaskManager.loadFromFile(taskStorage);
-
-            System.out.println(taskManager2.getTask(1));
-            System.out.println(taskManager2.getEpic(2));
-            System.out.println(taskManager2.getSubtask(3));
-        } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка в чтении или записи задач");
-        } finally {
-            assert taskStorage != null;
-            taskStorage.delete();
-        }
+        FileBackedTaskManager taskManager2 = FileBackedTaskManager.loadFromFile(taskStorage);
+        System.out.println(taskManager2.getTask(1));
+        System.out.println(taskManager2.getEpic(2));
+        System.out.println(taskManager2.getSubtask(3));
     }
 
-    public FileBackedTaskManager(File savedTasks) throws IOException {
+    public FileBackedTaskManager(File savedTasks) {
         this.savedTasks = savedTasks;
     }
 
-
-
-
-
-    public static FileBackedTaskManager loadFromFile(File file) throws IOException {
+    public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
         try (BufferedReader reader = new BufferedReader(new FileReader(file.getName(), StandardCharsets.UTF_8))) {
             reader.readLine(); //считываем первую строку, чтобы она не пошла в цикл по созданию задач
@@ -55,13 +41,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 if (fileBackedTaskManager.idOfTasks < task.getIdOfTask()) {
                     fileBackedTaskManager.idOfTasks = task.getIdOfTask();
                 }
-                if (task.getClass().toString().endsWith("Task")) {
-                    fileBackedTaskManager.taskCollection.put(task.getIdOfTask(), task);
-                } else if (task.getClass().toString().endsWith("Epic")) {
-                    fileBackedTaskManager.epicCollection.put(task.getIdOfTask(), (Epic) task);
-                } else {
-                    fileBackedTaskManager.subtaskCollection.put(task.getIdOfTask(), (Subtask) task);
-                    fileBackedTaskManager.epicCollection.get(((Subtask) task).getEpicId()).addSubtaskId(task.getIdOfTask());
+                switch (task.getType()) {
+                    case TASK -> fileBackedTaskManager.taskCollection.put(task.getIdOfTask(), task);
+                    case EPIC -> fileBackedTaskManager.epicCollection.put(task.getIdOfTask(), (Epic) task);
+                    case SUBTASK -> {
+                        fileBackedTaskManager.subtaskCollection.put(task.getIdOfTask(), (Subtask) task);
+                        fileBackedTaskManager.epicCollection.get(((Subtask) task).getEpicId()).
+                                addSubtaskId(task.getIdOfTask());
+                    }
                 }
             }
         } catch (IOException e) {

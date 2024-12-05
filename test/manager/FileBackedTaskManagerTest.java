@@ -9,11 +9,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FileBackedTaskManagerTest {
     File testFile;
@@ -45,13 +46,7 @@ class FileBackedTaskManagerTest {
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask("Подзадача 1", "Описание подзадачи 1", Status.NEW, epic.getIdOfTask());
         taskManager.addSubtask(subtask);
-        FileBackedTaskManager taskManager2;
-        try {
-            taskManager2 = FileBackedTaskManager.loadFromFile(testFile);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            throw new ManagerSaveException("Неправильно работает тестовый метод saveAndLoadTasksTest");
-        }
+        FileBackedTaskManager taskManager2 = FileBackedTaskManager.loadFromFile(testFile);
         assertEquals(taskManager.getAllTasks(), taskManager2.getAllTasks(), "Tasks are not equals");
         assertEquals(taskManager.getAllEpics(), taskManager2.getAllEpics(), "Epics are not equals");
         assertEquals(taskManager.getAllSubtasks(), taskManager2.getAllSubtasks(), "Subtasks are not equals");

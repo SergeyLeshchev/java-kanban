@@ -4,18 +4,20 @@ import data.*;
 
 public class TaskSerializer {
     public static String toStringTask(Task task) {
-        String taskString = task.getIdOfTask() + ",";
+        StringBuilder taskString = new StringBuilder(task.getIdOfTask() + ",");
         switch (task.getType()) {
-            case TASK -> taskString += "TASK,";
-            case EPIC -> taskString += "EPIC,";
-            case SUBTASK -> taskString += "SUBTASK,";
+            case TASK -> taskString.append("TASK,");
+            case EPIC -> taskString.append("EPIC,");
+            case SUBTASK -> taskString.append("SUBTASK,");
         }
-        taskString += task.getTitle() + "," + task.getStatus() + "," + task.getDescription() + ",";
+        taskString.append(task.getTitle()).append(",").
+                   append(task.getStatus()).append(",").
+                   append(task.getDescription()).append(",");
         if (task.getType().equals(TaskType.SUBTASK)) {
             Subtask subtask = (Subtask) task;
-            taskString += subtask.getEpicId();
+            taskString.append(subtask.getEpicId());
         }
-        return taskString;
+        return taskString.toString();
     }
 
     public static Task fromString(String value) {
