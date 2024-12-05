@@ -10,6 +10,7 @@ public class TaskSerializer {
             case EPIC -> taskString.append("EPIC,");
             case SUBTASK -> taskString.append("SUBTASK,");
         }
+        // Исправлены неправильные переносы
         taskString.append(task.getTitle()).append(",")
                   .append(task.getStatus()).append(",")
                   .append(task.getDescription()).append(",");
