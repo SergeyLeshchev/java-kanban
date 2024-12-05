@@ -10,9 +10,9 @@ public class TaskSerializer {
             case EPIC -> taskString.append("EPIC,");
             case SUBTASK -> taskString.append("SUBTASK,");
         }
-        taskString.append(task.getTitle()).append(",").
-                   append(task.getStatus()).append(",").
-                   append(task.getDescription()).append(",");
+        taskString.append(task.getTitle()).append(",")
+                  .append(task.getStatus()).append(",")
+                  .append(task.getDescription()).append(",");
         if (task.getType().equals(TaskType.SUBTASK)) {
             Subtask subtask = (Subtask) task;
             taskString.append(subtask.getEpicId());
