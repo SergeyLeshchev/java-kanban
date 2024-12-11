@@ -2,6 +2,8 @@ package data;
 
 import java.util.Objects;
 
+import static data.TaskType.TASK;
+
 public class Task {
     private final String title;
     private final String description;
@@ -43,6 +45,10 @@ public class Task {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public TaskType getType() {
+        return TASK;
     }
 
     @Override

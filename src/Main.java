@@ -7,7 +7,7 @@ import manager.TaskManager;
 
 public class Main {
     public static void main(String[] args) {
-        // Пользовательский сценарий:
+        // Образец задач для использования в разработке
         TaskManager taskManager = Managers.getDefaultTaskManager();
 
         Task task1 = new Task("Задача 1", "Описание задачи 1", Status.NEW);
@@ -31,6 +31,7 @@ public class Main {
         Epic epic2 = new Epic("Эпик 2", "Описание эпика 2", Status.NEW);
         taskManager.addEpic(epic2);
 
+        // Пользовательский сценарий для InMemoryHistoryManager
         taskManager.getTask(1);
         taskManager.getTask(2);
         taskManager.getEpic(3);

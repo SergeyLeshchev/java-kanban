@@ -2,6 +2,8 @@ package data;
 
 import java.util.ArrayList;
 
+import static data.TaskType.EPIC;
+
 public class Epic extends Task {
     private ArrayList<Integer> subtasksIds = new ArrayList<>();
 
@@ -18,12 +20,12 @@ public class Epic extends Task {
         this.subtasksIds = subtasksIds;
     }
 
-    public ArrayList<Integer> getSubtasksIds() {
-        return subtasksIds;
+    public TaskType getType() {
+        return EPIC;
     }
 
-    public void setSubtasksIds(ArrayList<Integer> subtasksIds) {
-        this.subtasksIds = subtasksIds;
+    public ArrayList<Integer> getSubtasksIds() {
+        return subtasksIds;
     }
 
     public void addSubtaskId(int idOfSubtask) {
