@@ -80,7 +80,7 @@ public class InMemoryTaskManager implements TaskManager {
             if (epic != null) {
                 epic.addSubtaskId(subtask.getIdOfTask());
                 calculateEpicStatus(epic);
-                CalculateEpicTimeAndDuration(epic);
+                calculateEpicTimeAndDuration(epic);
             }
         }
     }
@@ -99,7 +99,7 @@ public class InMemoryTaskManager implements TaskManager {
                 prioritizedTasks.add(subtask);
             }
             calculateEpicStatus(epicCollection.get(subtask.getEpicId()));
-            CalculateEpicTimeAndDuration(epicCollection.get(subtask.getEpicId()));
+            calculateEpicTimeAndDuration(epicCollection.get(subtask.getEpicId()));
         }
     }
 
@@ -131,7 +131,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setStatus(Status.DONE);
     }
 
-    private void CalculateEpicTimeAndDuration(Epic epic) {
+    private void calculateEpicTimeAndDuration(Epic epic) {
         Optional<LocalDateTime> startTimeOptional = epic.getSubtasksIds().stream()
                 .map(subtaskId -> getSubtask(subtaskId).getStartTime())
                 .min(Comparator.naturalOrder());
@@ -243,7 +243,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epicCollection.containsKey(idOfEpic)) {
             epicCollection.get(idOfEpic).removeSubtaskId(idOfTask);
             calculateEpicStatus(epicCollection.get(idOfEpic));
-            CalculateEpicTimeAndDuration(epicCollection.get(idOfEpic));
+            calculateEpicTimeAndDuration(epicCollection.get(idOfEpic));
         }
         historyManager.remove(idOfTask);
     }
