@@ -16,8 +16,8 @@ public class TaskSerializer {
             case SUBTASK -> taskString.append("SUBTASK,");
         }
         taskString.append(task.getTitle()).append(",")
-                  .append(task.getStatus()).append(",")
-                  .append(task.getDescription()).append(",");
+                .append(task.getStatus()).append(",")
+                .append(task.getDescription()).append(",");
         // Для эпиков
         if (task.getType().equals(EPIC)) {
             Epic epic = (Epic) task;
@@ -25,13 +25,13 @@ public class TaskSerializer {
                 taskString.append("null,0,null,"); // Если у эпика нет подзадач, то его startTime, duration и endTime = 0
             } else {
                 taskString.append(task.getStartTime()).append(",")
-                          .append(task.getDuration().toMinutes()).append(",")
-                          .append(epic.getEndTime());
+                        .append(task.getDuration().toMinutes()).append(",")
+                        .append(epic.getEndTime());
             }
-        // Для не эпиков
+            // Для не эпиков
         } else {
             taskString.append(task.getStartTime()).append(",")
-                      .append(task.getDuration().toMinutes()).append(",");
+                    .append(task.getDuration().toMinutes()).append(",");
         }
         // Для подзадач
         if (task.getType().equals(TaskType.SUBTASK)) {

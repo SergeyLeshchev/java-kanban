@@ -143,7 +143,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setEndTime(endTimeOptional.get());
 
         Duration duration = Duration.ofMinutes(0);
-        for(int subtaskId: epic.getSubtasksIds()) {
+        for (int subtaskId : epic.getSubtasksIds()) {
             duration = duration.plus(getSubtask(subtaskId).getDuration());
         }
         epic.setDuration(duration);
@@ -191,9 +191,9 @@ public class InMemoryTaskManager implements TaskManager {
                 .filter(subtask -> subtask.getType().equals(SUBTASK))
                 .map(prioritizedTasks::remove);
         epicCollection.values().forEach(epic -> {
-                    epic.getSubtasksIds().clear();
-                    epic.setStatus(Status.NEW);
-                });
+            epic.getSubtasksIds().clear();
+            epic.setStatus(Status.NEW);
+        });
     }
 
     @Override
@@ -227,10 +227,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeEpic(int idOfTask) {
         epicCollection.get(idOfTask).getSubtasksIds().forEach(subtaskId -> {
-                            historyManager.remove(subtaskCollection.get(subtaskId).getIdOfTask());
-                            prioritizedTasks.remove(subtaskCollection.get(subtaskId));
-                            subtaskCollection.remove(subtaskId);
-                        });
+            historyManager.remove(subtaskCollection.get(subtaskId).getIdOfTask());
+            prioritizedTasks.remove(subtaskCollection.get(subtaskId));
+            subtaskCollection.remove(subtaskId);
+        });
         epicCollection.remove(idOfTask);
         historyManager.remove(idOfTask);
     }
@@ -272,7 +272,7 @@ public class InMemoryTaskManager implements TaskManager {
     private boolean isTaskCross(Task task1, Task task2) {
         // Либо старт первой задачи находится между стартом и финишем второй задачи
         return (task1.getStartTime().isAfter(task2.getStartTime()) && task1.getStartTime().isBefore(task2.getEndTime())) ||
-        // Либо финиш первой задачи находится между стартом и финишем второй задачи
-               (task1.getEndTime().isAfter(task2.getStartTime()) && task1.getEndTime().isBefore(task2.getEndTime()));
+                // Либо финиш первой задачи находится между стартом и финишем второй задачи
+                (task1.getEndTime().isAfter(task2.getStartTime()) && task1.getEndTime().isBefore(task2.getEndTime()));
     }
 }

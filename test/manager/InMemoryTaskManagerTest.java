@@ -286,7 +286,7 @@ class InMemoryTaskManagerTest {
         taskManager.addTask(task5);
         System.out.println(taskManager.getPrioritizedTasks());
         List<Task> list1 = taskManager.getPrioritizedTasks().stream()
-                        .toList();
+                .toList();
         List<Task> list2 = List.of(task4, task1, task5);
         assertEquals(list1, list2, "isTaskCross method works not right");
     }
