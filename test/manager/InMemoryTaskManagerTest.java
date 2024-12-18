@@ -7,7 +7,10 @@ import data.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,9 +23,11 @@ class InMemoryTaskManagerTest {
     @BeforeEach
     void generateTasksForTest() {
         taskManager = Managers.getDefaultTaskManager();
-        task = new Task("task", "task description", Status.NEW);
+        task = new Task("task", "task description", Status.NEW,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10));
         epic = new Epic("epic", "epic description", Status.NEW);
-        subtask = new Subtask("subtask", "subtask description", Status.NEW, epic.getIdOfTask());
+        subtask = new Subtask("subtask", "subtask description", Status.NEW,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
     }
 
     @Test
@@ -47,7 +52,8 @@ class InMemoryTaskManagerTest {
     @Test
     void updateTaskTest() {
         taskManager.addTask(task);
-        Task task2 = new Task("task2", "task2 description", Status.DONE, 1);
+        Task task2 = new Task("task2", "task2 description", Status.DONE,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), 1);
         taskManager.updateTask(task2);
         assertEquals(task2.getTitle(), taskManager.getTask(1).getTitle(),
                 "Title is not equal, updateTask() not works correctly");
@@ -62,8 +68,11 @@ class InMemoryTaskManagerTest {
     @Test
     void updateSubtaskTest() {
         taskManager.addEpic(epic);
-        taskManager.addSubtask(subtask);
-        Subtask subtask2 = new Subtask("subtask2", "subtask2 description", Status.DONE, epic.getIdOfTask(), 2);
+        Subtask subtask1 = new Subtask("subtask", "subtask description", Status.NEW,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
+        taskManager.addSubtask(subtask1);
+        Subtask subtask2 = new Subtask("subtask2", "subtask2 description", Status.DONE,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask(), 2);
         taskManager.updateSubtask(subtask2);
         assertEquals(subtask2.getTitle(), taskManager.getSubtask(2).getTitle(),
                 "Title is not equal, updateSubtask() not works correctly");
@@ -82,12 +91,14 @@ class InMemoryTaskManagerTest {
         ArrayList<Integer> list1 = new ArrayList<>();
         list1.add(1);
         list1.add(2);
-        Epic epic1 = new Epic("epic1", "epic1 description", Status.NEW, list1, 1);
+        Epic epic1 = new Epic("epic1", "epic1 description", Status.NEW,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), list1, 1);
         taskManager.addEpic(epic1);
         ArrayList<Integer> list2 = new ArrayList<>();
         list2.add(3);
         list2.add(4);
-        Epic epic2 = new Epic("epic2", "epic2 description", Status.DONE, list2, 1);
+        Epic epic2 = new Epic("epic2", "epic2 description", Status.DONE,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), list2, 1);
         taskManager.updateEpic(epic2);
         assertEquals(epic2.getTitle(), taskManager.getEpic(1).getTitle(),
                 "Title is not equal, updateEpic() not works correctly");
@@ -146,7 +157,8 @@ class InMemoryTaskManagerTest {
     @Test
     void removeAllSubtasksTest() {
         taskManager.addSubtask(subtask);
-        Subtask subtask2 = new Subtask("subtask2", "subtask2 description", Status.NEW, epic.getIdOfTask());
+        Subtask subtask2 = new Subtask("subtask2", "subtask2 description", Status.NEW,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
         taskManager.addSubtask(subtask2);
         taskManager.removeAllSubtasks();
         assertTrue(taskManager.getAllSubtasks().isEmpty(), "removeAllSubtasks() did not delete all subtasks");
@@ -176,9 +188,11 @@ class InMemoryTaskManagerTest {
     @Test
     void calculateEpicStatusTest() {
         taskManager.addEpic(epic);
-        Subtask subtask1 = new Subtask("subtask1", "subtask1 description", Status.NEW, epic.getIdOfTask());
+        Subtask subtask1 = new Subtask("subtask1", "subtask1 description", Status.NEW,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
         taskManager.addSubtask(subtask1);
-        Subtask subtask2 = new Subtask("subtask2", "subtask2 description", Status.NEW, epic.getIdOfTask());
+        Subtask subtask2 = new Subtask("subtask2", "subtask2 description", Status.NEW,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
         taskManager.addSubtask(subtask2);
         assertEquals(Status.NEW, taskManager.getEpic(1).getStatus(),
                 "epic status is not equal NEW, when all subtasks - NEW");
@@ -209,15 +223,19 @@ class InMemoryTaskManagerTest {
     void getSubtasksOfEpicTest() {
         // Создадим 2 эпика с 2 сабтасками в каждом, чтобы быть уверенными, что метод вернет только нужные сабтаски
         taskManager.addEpic(epic);
-        Subtask subtask1 = new Subtask("subtask1", "subtask1 description", Status.NEW, epic.getIdOfTask());
+        Subtask subtask1 = new Subtask("subtask1", "subtask1 description", Status.NEW,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
         taskManager.addSubtask(subtask1);
-        Subtask subtask2 = new Subtask("subtask2", "subtask2 description", Status.NEW, epic.getIdOfTask());
+        Subtask subtask2 = new Subtask("subtask2", "subtask2 description", Status.NEW,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
         taskManager.addSubtask(subtask2);
         Epic epic2 = new Epic("epic2", "epic2 description", Status.DONE);
         taskManager.addEpic(epic2);
-        Subtask subtask3 = new Subtask("subtask3", "subtask3 description", Status.NEW, epic2.getIdOfTask());
+        Subtask subtask3 = new Subtask("subtask3", "subtask3 description", Status.NEW,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic2.getIdOfTask());
         taskManager.addSubtask(subtask3);
-        Subtask subtask4 = new Subtask("subtask4", "subtask4 description", Status.NEW, epic2.getIdOfTask());
+        Subtask subtask4 = new Subtask("subtask4", "subtask4 description", Status.NEW,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic2.getIdOfTask());
         taskManager.addSubtask(subtask4);
 
         boolean condition = (subtask3.equals(taskManager.getSubtasksOfEpic(epic2).get(0)) &&
@@ -238,5 +256,38 @@ class InMemoryTaskManagerTest {
                 taskManager.getHistory().get(1).equals(epic) &&
                 taskManager.getHistory().get(2).equals(subtask));
         assertTrue(condition, "getHistoryTest() not work correctly");
+    }
+
+    @Test
+    void subtaskHasEpicTest() {
+        taskManager.addEpic(epic);
+        Subtask subtask2 = new Subtask("subtask2", "subtask2 description", Status.NEW,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
+        taskManager.addSubtask(subtask2);
+        assertEquals(taskManager.getEpic(1), taskManager.getEpic(subtask2.getEpicId()), "subtask not has EpicId");
+    }
+
+    @Test
+    void isTaskCrossTest() {
+        Task task1 = new Task("task1", "task1 description", Status.NEW,
+                LocalDateTime.parse("2020-12-21T01:00:00"), Duration.ofMinutes(10));
+        Task task2 = new Task("task2", "task2 description", Status.NEW,
+                LocalDateTime.parse("2020-12-21T01:05:00"), Duration.ofMinutes(10));
+        Task task3 = new Task("task3", "task3 description", Status.NEW,
+                LocalDateTime.parse("2020-12-21T00:55:00"), Duration.ofMinutes(10));
+        Task task4 = new Task("task4", "task4 description", Status.NEW,
+                LocalDateTime.parse("2020-12-21T00:40:00"), Duration.ofMinutes(10));
+        Task task5 = new Task("task5", "task5 description", Status.NEW,
+                LocalDateTime.parse("2020-12-21T01:20:00"), Duration.ofMinutes(10));
+        taskManager.addTask(task1);
+        taskManager.addTask(task2);
+        taskManager.addTask(task3);
+        taskManager.addTask(task4);
+        taskManager.addTask(task5);
+        System.out.println(taskManager.getPrioritizedTasks());
+        List<Task> list1 = taskManager.getPrioritizedTasks().stream()
+                        .toList();
+        List<Task> list2 = List.of(task4, task1, task5);
+        assertEquals(list1, list2, "isTaskCross method works not right");
     }
 }

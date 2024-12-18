@@ -4,6 +4,9 @@ import data.Status;
 import data.Task;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AdditionalTest {
@@ -12,7 +15,8 @@ public class AdditionalTest {
     @Test
     void TasksWithSetIdAndGenerateIdNotConflictTest() {
         Task task1 = new Task("task1", "task1 description", Status.NEW);
-        Task task2 = new Task("task2", "task2 description", Status.NEW, 1);
+        Task task2 = new Task("task2", "task2 description", Status.NEW,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), 1);
         taskManager.addTask(task1);
         assertEquals(taskManager.getTask(1), task2, "Id generate not correctly");
     }
