@@ -19,9 +19,8 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FileBackedTaskManagerTest {
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     File testFile;
-    FileBackedTaskManager taskManager;
 
     @BeforeEach
     void fileAndManagerGeneration() {
@@ -60,7 +59,7 @@ class FileBackedTaskManagerTest {
     @Test
     void exceptionSaveTest() {
         Assertions.assertDoesNotThrow(() -> {
-            FileBackedTaskManager taskManager2 = FileBackedTaskManager.loadFromFile(testFile);
+            taskManager = FileBackedTaskManager.loadFromFile(testFile);
         }, "Exception thrown");
     }
 }

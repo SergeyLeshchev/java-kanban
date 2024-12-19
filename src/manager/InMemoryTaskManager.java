@@ -178,7 +178,10 @@ public class InMemoryTaskManager implements TaskManager {
         for (Integer idOfEpic : epicCollection.keySet()) {
             historyManager.remove(idOfEpic);
         }
-
+        subtaskCollection.keySet().forEach(subtaskId -> {
+            historyManager.remove(subtaskId);
+            prioritizedTasks.remove(getSubtask(subtaskId));
+        });
         subtaskCollection.clear();
         epicCollection.clear();
     }
@@ -261,8 +264,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public TreeSet<Task> getPrioritizedTasks() {
-        return prioritizedTasks;
+    public ArrayList<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
     }
 
     private boolean isValidTime(Task task) {
@@ -270,9 +273,6 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private boolean isTaskCross(Task task1, Task task2) {
-        // Либо старт первой задачи находится между стартом и финишем второй задачи
-        return (task1.getStartTime().isAfter(task2.getStartTime()) && task1.getStartTime().isBefore(task2.getEndTime())) ||
-                // Либо финиш первой задачи находится между стартом и финишем второй задачи
-                (task1.getEndTime().isAfter(task2.getStartTime()) && task1.getEndTime().isBefore(task2.getEndTime()));
+        return !(task1.getStartTime().isAfter(task2.getEndTime()) || task1.getEndTime().isBefore(task2.getStartTime()));
     }
 }
