@@ -8,6 +8,10 @@ import exceptions.ManagerSaveException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
+
+import static data.TaskType.EPIC;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File savedTasks;
@@ -15,17 +19,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public static void main(String[] args) {
         File taskStorage = new File("taskStorage.txt");
         FileBackedTaskManager taskManager = new FileBackedTaskManager(taskStorage);
-        Task task1 = new Task("Задача 1", "Описание задачи 1", Status.NEW);
+        Task task1 = new Task("Задача 1", "Описание задачи 1", Status.NEW,
+                LocalDateTime.parse("2021-12-21T21:21:21"), Duration.ofMinutes(10));
         taskManager.addTask(task1);
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1", Status.NEW);
         taskManager.addEpic(epic1);
-        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", Status.NEW, epic1.getIdOfTask());
+        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", Status.NEW,
+                LocalDateTime.parse("2020-12-21T21:21:21"), Duration.ofMinutes(10), epic1.getIdOfTask());
         taskManager.addSubtask(subtask1);
+        Epic epic2 = new Epic("Эпик 2", "Описание эпика 2", Status.NEW);
+        taskManager.addEpic(epic2);
 
         FileBackedTaskManager taskManager2 = FileBackedTaskManager.loadFromFile(taskStorage);
         System.out.println(taskManager2.getTask(1));
         System.out.println(taskManager2.getEpic(2));
         System.out.println(taskManager2.getSubtask(3));
+        System.out.println(taskManager2.getEpic(4));
+
+        System.out.println("Задачи по приоритету:");
+        for (Task task : taskManager.getPrioritizedTasks()) {
+            System.out.println(task);
+        }
     }
 
     public FileBackedTaskManager(File savedTasks) {
@@ -50,6 +64,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                                 .addSubtaskId(task.getIdOfTask());
                     }
                 }
+                if (!task.getType().equals(EPIC)) {
+                    fileBackedTaskManager.prioritizedTasks.add(task);
+                }
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -60,7 +77,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(savedTasks, StandardCharsets.UTF_8))) {
-            writer.write("id,type,name,status,description,epic\n");
+            writer.write("id,type,name,status,description, startTime, duration, endTime/epic\n");
             for (Task task : taskCollection.values()) {
                 writer.write(TaskSerializer.toStringTask(task) + "\n");
             }

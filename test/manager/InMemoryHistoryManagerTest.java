@@ -5,10 +5,11 @@ import data.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
     HistoryManager historyManager;
@@ -19,9 +20,12 @@ class InMemoryHistoryManagerTest {
     @BeforeEach
     void makeTasks() {
         historyManager = Managers.getDefaultHistoryManager();
-        task1 = new Task("task1", "task1 description", Status.NEW, 1);
-        task2 = new Task("task2", "task2 description", Status.NEW, 2);
-        task3 = new Task("task3", "task3 description", Status.NEW, 3);
+        task1 = new Task("task1", "task1 description", Status.NEW,
+                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), 1);
+        task2 = new Task("task2", "task2 description", Status.NEW,
+                LocalDateTime.parse("2004-12-21T21:21:21"), Duration.ofMinutes(10), 2);
+        task3 = new Task("task3", "task3 description", Status.NEW,
+                LocalDateTime.parse("2005-12-21T21:21:21"), Duration.ofMinutes(10), 3);
         historyManager.addTaskInHistory(task1);
         historyManager.addTaskInHistory(task2);
         historyManager.addTaskInHistory(task3);
@@ -56,5 +60,13 @@ class InMemoryHistoryManagerTest {
         historyManager.addTaskInHistory(task1);
         assertEquals(3, historyManager.getHistory().size(), "same task not deleted");
         assertNotEquals(historyManager.getHistory().get(0), historyManager.getHistory().get(2), "same task not deleted");
+    }
+
+    @Test
+    void emptyHistoryTest() {
+        historyManager.remove(1);
+        historyManager.remove(2);
+        historyManager.remove(3);
+        assertTrue(historyManager.getHistory().isEmpty(), "history is not empty");
     }
 }
