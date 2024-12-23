@@ -4,6 +4,8 @@ import data.Epic;
 import data.Status;
 import data.Subtask;
 import data.Task;
+import exceptions.HasInteractionsException;
+import exceptions.NotFoundException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -23,31 +25,31 @@ public class InMemoryTaskManager implements TaskManager {
     protected int idOfTasks = 1;
 
     @Override
-    public void addTask(Task task) {
+    public void addTask(Task task) throws HasInteractionsException {
+        if (prioritizedTasks.stream().anyMatch(task1 -> isTaskCross(task, task1))) {
+            throw new HasInteractionsException("Задача имеет пересечение во времени с другими задачами");
+        }
         task.setIdOfTask(idOfTasks);
         taskCollection.put(idOfTasks, task);
-
-        if (isValidTime(task) && prioritizedTasks.stream()
-                .noneMatch(task1 -> isTaskCross(task, task1))) {
+        if (isValidTime(task)) {
             prioritizedTasks.add(task);
         }
         idOfTasks++;
     }
 
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws HasInteractionsException {
+        // удаляем старый экземпляр задачи, если в списке есть задача с этим же id
+        prioritizedTasks.remove(task);
+        if (prioritizedTasks.stream().anyMatch(task1 -> isTaskCross(task, task1))) {
+            throw new HasInteractionsException("Задача имеет пересечение во времени с другими задачами");
+        }
         if (taskCollection.containsKey(task.getIdOfTask())) {
             taskCollection.put(task.getIdOfTask(), task);
-        }
-
-        if (isValidTime(task) && prioritizedTasks.stream()
-                .noneMatch(task1 -> isTaskCross(task, task1))) {
-            // удаляем старый экземпляр задачи, если в списке есть задача с этим же id
-            if (prioritizedTasks.contains(task)) {
-                prioritizedTasks.remove(task);
+            if (isValidTime(task)) {
+                // добавляем обновленную задачу
+                prioritizedTasks.add(task);
             }
-            // добавляем обновленную задачу
-            prioritizedTasks.add(task);
         }
     }
 
@@ -66,11 +68,13 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addSubtask(Subtask subtask) {
+    public void addSubtask(Subtask subtask) throws HasInteractionsException {
+        if (prioritizedTasks.stream().anyMatch(subtask1 -> isTaskCross(subtask, subtask1))) {
+            throw new HasInteractionsException("Подзадача имеет пересечение во времени с другими задачами");
+        }
         subtask.setIdOfTask(idOfTasks);
         subtaskCollection.put(idOfTasks, subtask);
-        if (isValidTime(subtask) && prioritizedTasks.stream()
-                .noneMatch(subtask1 -> isTaskCross(subtask, subtask1))) {
+        if (isValidTime(subtask)) {
             prioritizedTasks.add(subtask);
         }
         idOfTasks++;
@@ -86,21 +90,21 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) throws HasInteractionsException {
+        // удаляем старый экземпляр задачи, если в списке есть задача с этим же id
+        prioritizedTasks.remove(subtask);
+        if (prioritizedTasks.stream().anyMatch(task1 -> isTaskCross(subtask, task1))) {
+            throw new HasInteractionsException("Подзадача имеет пересечение во времени с другими задачами");
+        }
         if (subtaskCollection.containsKey(subtask.getIdOfTask())) {
             subtaskCollection.put(subtask.getIdOfTask(), subtask);
-            if (isValidTime(subtask) && prioritizedTasks.stream()
-                    .noneMatch(subtask1 -> isTaskCross(subtask, subtask1))) {
-                // удаляем старый экземпляр задачи, если в списке есть задача с этим же id
-                if (prioritizedTasks.contains(subtask)) {
-                    prioritizedTasks.remove(subtask);
-                }
+            if (isValidTime(subtask)) {
                 // добавляем обновленную задачу
                 prioritizedTasks.add(subtask);
             }
-            calculateEpicStatus(epicCollection.get(subtask.getEpicId()));
-            calculateEpicTimeAndDuration(epicCollection.get(subtask.getEpicId()));
         }
+        calculateEpicStatus(epicCollection.get(subtask.getEpicId()));
+        calculateEpicTimeAndDuration(epicCollection.get(subtask.getEpicId()));
     }
 
     private void calculateEpicStatus(Epic epic) {
@@ -200,21 +204,30 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getTask(int idOfTask) {
+    public Task getTask(int idOfTask) throws NotFoundException {
+        if (!taskCollection.containsKey(idOfTask)) {
+            throw new NotFoundException("Нет задачи с таким id");
+        }
         Task task = taskCollection.get(idOfTask);
         historyManager.addTaskInHistory(task);
         return task;
     }
 
     @Override
-    public Epic getEpic(int idOfTask) {
+    public Epic getEpic(int idOfTask) throws NotFoundException {
+        if (!epicCollection.containsKey(idOfTask)) {
+            throw new NotFoundException("Нет эпика с таким id");
+        }
         Epic epic = epicCollection.get(idOfTask);
         historyManager.addTaskInHistory(epic);
         return epic;
     }
 
     @Override
-    public Subtask getSubtask(int idOfTask) {
+    public Subtask getSubtask(int idOfTask) throws NotFoundException {
+        if (!subtaskCollection.containsKey(idOfTask)) {
+            throw new NotFoundException("Нет подзадачи с таким id");
+        }
         Subtask subtask = subtaskCollection.get(idOfTask);
         historyManager.addTaskInHistory(subtask);
         return subtask;
@@ -253,6 +266,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public ArrayList<Subtask> getSubtasksOfEpic(Epic epic) {
+        if (!epicCollection.containsKey(epic.getIdOfTask())) {
+            throw new NotFoundException("Нет эпика с таким id");
+        }
         return new ArrayList<>(epic.getSubtasksIds().stream()
                 .map(subtaskId -> subtaskCollection.get(subtaskId))
                 .collect(Collectors.toList()));

@@ -4,6 +4,7 @@ import data.Epic;
 import data.Status;
 import data.Subtask;
 import data.Task;
+import exceptions.HasInteractionsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,11 +13,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     @BeforeEach
     void generateTasksForTest() {
-        super.taskManager = (InMemoryTaskManager) Managers.getDefaultTaskManager();
+        taskManager = (InMemoryTaskManager) Managers.getDefaultTaskManager();
     }
 
     @Test
@@ -24,10 +26,10 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         Epic epic = new Epic("epic", "epic description", Status.NEW);
         taskManager.addEpic(epic);
         Subtask subtask1 = new Subtask("subtask1", "subtask1 description", Status.NEW,
-                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
+                LocalDateTime.parse("2000-12-01T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
         taskManager.addSubtask(subtask1);
         Subtask subtask2 = new Subtask("subtask2", "subtask2 description", Status.NEW,
-                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
+                LocalDateTime.parse("2000-12-02T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
         taskManager.addSubtask(subtask2);
         assertEquals(Status.NEW, taskManager.getEpic(1).getStatus(),
                 "epic status is not equal NEW, when all subtasks - NEW");
@@ -59,7 +61,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         Epic epic = new Epic("epic", "epic description", Status.NEW);
         taskManager.addEpic(epic);
         Subtask subtask2 = new Subtask("subtask2", "subtask2 description", Status.NEW,
-                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
+                LocalDateTime.parse("2000-12-03T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
         taskManager.addSubtask(subtask2);
         assertEquals(taskManager.getEpic(1), taskManager.getEpic(subtask2.getEpicId()),
                 "subtask not has EpicId");
@@ -67,22 +69,30 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
     @Test
     void isTaskCrossTest() {
+        Epic epic = new Epic("epic", "epic description", Status.NEW);
+        taskManager.addEpic(epic);
         Task task1 = new Task("task1", "task1 description", Status.NEW,
-                LocalDateTime.parse("2020-12-21T01:00:00"), Duration.ofMinutes(10));
+                LocalDateTime.parse("2000-12-04T10:00:00"), Duration.ofMinutes(10));
         Task task2 = new Task("task2", "task2 description", Status.NEW,
-                LocalDateTime.parse("2020-12-21T01:05:00"), Duration.ofMinutes(10));
+                LocalDateTime.parse("2000-12-04T10:00:00"), Duration.ofMinutes(10));
         Task task3 = new Task("task3", "task3 description", Status.NEW,
-                LocalDateTime.parse("2020-12-21T00:55:00"), Duration.ofMinutes(10));
-        Task task4 = new Task("task4", "task4 description", Status.NEW,
-                LocalDateTime.parse("2020-12-21T00:40:00"), Duration.ofMinutes(10));
+                LocalDateTime.parse("2000-12-05T10:00:00"), Duration.ofMinutes(10));
+        Subtask task4 = new Subtask("task4", "task4 description", Status.NEW,
+                LocalDateTime.parse("2000-12-05T10:00:00"), Duration.ofMinutes(10), 1);
         Task task5 = new Task("task5", "task5 description", Status.NEW,
-                LocalDateTime.parse("2020-12-21T01:20:00"), Duration.ofMinutes(10));
+                LocalDateTime.parse("2000-12-06T10:00:00"), Duration.ofMinutes(10));
         taskManager.addTask(task1);
-        taskManager.addTask(task2);
         taskManager.addTask(task3);
-        taskManager.addTask(task4);
         taskManager.addTask(task5);
-        assertEquals(taskManager.getPrioritizedTasks(), List.of(task4, task1, task5),
+
+        assertThrows(HasInteractionsException.class, () -> {
+            taskManager.addTask(task2);
+            taskManager.addTask(task4);
+        }, "Exception thrown");
+
+        assertEquals(taskManager.getPrioritizedTasks(), List.of(task1, task3, task5),
+                "isTaskCross method works not right");
+        assertEquals(taskManager.getPrioritizedTasks(), List.of(task1, task3, task5),
                 "isTaskCross method works not right");
     }
 }

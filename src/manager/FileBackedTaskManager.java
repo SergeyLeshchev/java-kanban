@@ -20,12 +20,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         File taskStorage = new File("taskStorage.txt");
         FileBackedTaskManager taskManager = new FileBackedTaskManager(taskStorage);
         Task task1 = new Task("Задача 1", "Описание задачи 1", Status.NEW,
-                LocalDateTime.parse("2021-12-21T21:21:21"), Duration.ofMinutes(10));
+                LocalDateTime.parse("2019-12-21T21:21:21"), Duration.ofMinutes(10));
         taskManager.addTask(task1);
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", Status.NEW,
-                LocalDateTime.parse("2020-12-21T21:21:21"), Duration.ofMinutes(10), epic1.getIdOfTask());
+                LocalDateTime.parse("2019-12-21T21:21:21"), Duration.ofMinutes(10), epic1.getIdOfTask());
         taskManager.addSubtask(subtask1);
         Epic epic2 = new Epic("Эпик 2", "Описание эпика 2", Status.NEW);
         taskManager.addEpic(epic2);
