@@ -1,4 +1,4 @@
-package http_handler;
+package httphandler;
 
 import com.google.gson.reflect.TypeToken;
 import data.Status;

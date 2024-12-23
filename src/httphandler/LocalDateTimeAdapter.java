@@ -1,4 +1,4 @@
-package http_handler;
+package httphandler;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
