@@ -61,7 +61,7 @@ class HistoryHttpHandlerTest {
         assertEquals(200, response.statusCode());
         Type taskListType = new TypeToken<ArrayList<Task>>() {
         }.getType();
-        List<Task> history = taskServer.getGson().fromJson(response.body(), taskListType);
+        List<Task> history = HttpTaskServer.getGson().fromJson(response.body(), taskListType);
         assertEquals(taskManager.getHistory(), history, "getHistoryHandleTest работает неправильно");
     }
 }

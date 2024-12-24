@@ -51,7 +51,7 @@ class SubtaskHttpHandlerTest {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
-        Subtask subtask1 = taskServer.getGson().fromJson(response.body(), Subtask.class);
+        Subtask subtask1 = HttpTaskServer.getGson().fromJson(response.body(), Subtask.class);
         assertEquals("subtask", subtask1.getTitle(), "getSubtaskHandleTest работает неправильно");
     }
 
@@ -74,7 +74,7 @@ class SubtaskHttpHandlerTest {
         assertEquals(200, response.statusCode());
         Type subtaskListType = new TypeToken<ArrayList<Subtask>>() {
         }.getType();
-        List<Subtask> subtasks = taskServer.getGson().fromJson(response.body(), subtaskListType);
+        List<Subtask> subtasks = HttpTaskServer.getGson().fromJson(response.body(), subtaskListType);
         assertEquals(taskManager.getAllSubtasks(), subtasks, "getSubtasksHandleTest работает неправильно");
     }
 
@@ -82,7 +82,7 @@ class SubtaskHttpHandlerTest {
     void postCreateSubtaskHandleTest() throws IOException, InterruptedException {
         Subtask subtask = new Subtask("subtask", "subtask description", Status.NEW,
                 LocalDateTime.parse("2099-12-16T21:21:21"), Duration.ofMinutes(10), 5);
-        String subtaskJson = taskServer.getGson().toJson(subtask);
+        String subtaskJson = HttpTaskServer.getGson().toJson(subtask);
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks");
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(subtaskJson)).build();
@@ -105,7 +105,7 @@ class SubtaskHttpHandlerTest {
         taskManager.addSubtask(subtask);
         Subtask subtask1 = new Subtask("subtask1", "subtask1 description", Status.NEW,
                 LocalDateTime.parse("2099-12-17T21:21:21"), Duration.ofMinutes(10), 1, 2);
-        String subtask1Json = taskServer.getGson().toJson(subtask1);
+        String subtask1Json = HttpTaskServer.getGson().toJson(subtask1);
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks");
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(subtask1Json)).build();

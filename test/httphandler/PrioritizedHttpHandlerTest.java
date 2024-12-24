@@ -58,7 +58,7 @@ class PrioritizedHttpHandlerTest {
         assertEquals(200, response.statusCode());
         Type taskListType = new TypeToken<ArrayList<Task>>() {
         }.getType();
-        List<Task> prioritizedTasks = taskServer.getGson().fromJson(response.body(), taskListType);
+        List<Task> prioritizedTasks = HttpTaskServer.getGson().fromJson(response.body(), taskListType);
         assertEquals(taskManager.getPrioritizedTasks(), prioritizedTasks, "getPrioritized работает неправильно");
     }
 }

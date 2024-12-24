@@ -50,7 +50,7 @@ class TaskHttpHandlerTest {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
-        Task task1 = taskServer.getGson().fromJson(response.body(), Task.class);
+        Task task1 = HttpTaskServer.getGson().fromJson(response.body(), Task.class);
         assertEquals("task", task1.getTitle(), "getTaskHandleTest работает неправильно");
     }
 
@@ -73,7 +73,7 @@ class TaskHttpHandlerTest {
         assertEquals(200, response.statusCode());
         Type taskListType = new TypeToken<ArrayList<Task>>() {
         }.getType();
-        List<Task> tasks = taskServer.getGson().fromJson(response.body(), taskListType);
+        List<Task> tasks = HttpTaskServer.getGson().fromJson(response.body(), taskListType);
         assertEquals(taskManager.getAllTasks(), tasks, "getTasksHandleTest работает неправильно");
     }
 
@@ -81,7 +81,7 @@ class TaskHttpHandlerTest {
     void postCreateTaskHandleTest() throws IOException, InterruptedException {
         Task task = new Task("task", "task description", Status.NEW,
                 LocalDateTime.parse("2001-01-02T21:21:21"), Duration.ofMinutes(10));
-        String taskJson = taskServer.getGson().toJson(task);
+        String taskJson = HttpTaskServer.getGson().toJson(task);
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/tasks");
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
@@ -102,7 +102,7 @@ class TaskHttpHandlerTest {
         taskManager.addTask(task);
         Task task1 = new Task("task1", "task1 description", Status.NEW,
                 LocalDateTime.parse("2001-01-02T21:21:21"), Duration.ofMinutes(10), 1);
-        String task1Json = taskServer.getGson().toJson(task1);
+        String task1Json = HttpTaskServer.getGson().toJson(task1);
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/tasks");
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(task1Json)).build();

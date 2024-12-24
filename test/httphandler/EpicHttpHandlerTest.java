@@ -50,7 +50,7 @@ class EpicHttpHandlerTest {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response.statusCode());
-        Epic epic1 = taskServer.getGson().fromJson(response.body(), Epic.class);
+        Epic epic1 = HttpTaskServer.getGson().fromJson(response.body(), Epic.class);
         assertEquals("epic", epic1.getTitle(), "getEpicHandleTest работает неправильно");
     }
 
@@ -71,7 +71,7 @@ class EpicHttpHandlerTest {
         assertEquals(200, response.statusCode());
         Type epicListType = new TypeToken<ArrayList<Epic>>() {
         }.getType();
-        List<Epic> epics = taskServer.getGson().fromJson(response.body(), epicListType);
+        List<Epic> epics = HttpTaskServer.getGson().fromJson(response.body(), epicListType);
         assertEquals(taskManager.getAllEpics(), epics, "getEpicsHandleTest работает неправильно");
     }
 
@@ -93,14 +93,14 @@ class EpicHttpHandlerTest {
         assertEquals(200, response.statusCode());
         Type subtaskListType = new TypeToken<ArrayList<Subtask>>() {
         }.getType();
-        List<Subtask> subtasks = taskServer.getGson().fromJson(response.body(), subtaskListType);
+        List<Subtask> subtasks = HttpTaskServer.getGson().fromJson(response.body(), subtaskListType);
         assertEquals(taskManager.getSubtasksOfEpic(epic), subtasks, "getEpicSubtasksHandleTest работает неправильно");
     }
 
     @Test
     void postCreateEpicHandleTest() throws IOException, InterruptedException {
         Epic epic = new Epic("epic", "epic description", Status.NEW);
-        String epicJson = taskServer.getGson().toJson(epic);
+        String epicJson = HttpTaskServer.getGson().toJson(epic);
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics");
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(epicJson)).build();

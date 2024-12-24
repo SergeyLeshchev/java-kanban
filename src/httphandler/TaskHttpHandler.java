@@ -2,21 +2,27 @@ package httphandler;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import data.Endpoint;
+import data.Task;
 import exceptions.HasInteractionsException;
 import exceptions.NotFoundException;
 import manager.TaskManager;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 
-public class TaskHttpHandler extends BaseHttpHandler implements HttpHandler {
+public class TaskHttpHandler extends BaseHttpHandler {
+    private Task task;
+
     public TaskHttpHandler(TaskManager taskManager, Gson gson) {
         super(taskManager, gson);
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        if (exchange.getRequestMethod().equals("POST")) {
+            task = gson.fromJson(new InputStreamReader(exchange.getRequestBody()), Task.class);
+        }
         Endpoint endpoint = getEndpoint(exchange);
         try {
             switch (endpoint) {
@@ -43,5 +49,16 @@ public class TaskHttpHandler extends BaseHttpHandler implements HttpHandler {
         } catch (IOException e) {
             writeResponse(exchange, "Произошла ошибка при обработке запроса", 500);
         }
+    }
+
+    private Endpoint getEndpoint(HttpExchange exchange) {
+        String[] pathParts = exchange.getRequestURI().getPath().split("/");
+        String request = exchange.getRequestMethod() + " " + pathParts[1];
+        return switch (request) {
+            case "GET tasks" -> (pathParts.length == 2) ? Endpoint.GET_TASKS : Endpoint.GET_TASK;
+            case "POST tasks" -> (task.getIdOfTask() == 0) ? Endpoint.POST_CREATE_TASK : Endpoint.POST_UPDATE_TASK;
+            case "DELETE tasks" -> Endpoint.DELETE_TASK;
+            default -> Endpoint.UNKNOWN;
+        };
     }
 }
