@@ -16,7 +16,7 @@ public class AdditionalTest {
     void TasksWithSetIdAndGenerateIdNotConflictTest() {
         Task task1 = new Task("task1", "task1 description", Status.NEW);
         Task task2 = new Task("task2", "task2 description", Status.NEW,
-                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), 1);
+                LocalDateTime.parse("2000-12-14T21:21:21"), Duration.ofMinutes(10), 1);
         taskManager.addTask(task1);
         assertEquals(taskManager.getTask(1), task2, "Id generate not correctly");
     }

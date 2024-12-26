@@ -43,12 +43,12 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     @Test
     void saveAndLoadTasksTest() {
         Task task = new Task("Задача 1", "Описание задачи 1", Status.NEW,
-                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10));
+                LocalDateTime.parse("2000-12-12T21:21:21"), Duration.ofMinutes(10));
         taskManager.addTask(task);
         Epic epic = new Epic("Эпик 1", "Описание эпика 1", Status.NEW);
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask("Подзадача 1", "Описание подзадачи 1", Status.NEW,
-                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
+                LocalDateTime.parse("2000-12-13T21:21:21"), Duration.ofMinutes(10), epic.getIdOfTask());
         taskManager.addSubtask(subtask);
         FileBackedTaskManager taskManager2 = FileBackedTaskManager.loadFromFile(testFile);
         assertEquals(taskManager.getAllTasks(), taskManager2.getAllTasks(), "Tasks are not equals");

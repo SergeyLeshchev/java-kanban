@@ -21,11 +21,11 @@ class InMemoryHistoryManagerTest {
     void makeTasks() {
         historyManager = Managers.getDefaultHistoryManager();
         task1 = new Task("task1", "task1 description", Status.NEW,
-                LocalDateTime.parse("2003-12-21T21:21:21"), Duration.ofMinutes(10), 1);
+                LocalDateTime.parse("2000-12-09T21:21:21"), Duration.ofMinutes(10), 1);
         task2 = new Task("task2", "task2 description", Status.NEW,
-                LocalDateTime.parse("2004-12-21T21:21:21"), Duration.ofMinutes(10), 2);
+                LocalDateTime.parse("2000-12-10T21:21:21"), Duration.ofMinutes(10), 2);
         task3 = new Task("task3", "task3 description", Status.NEW,
-                LocalDateTime.parse("2005-12-21T21:21:21"), Duration.ofMinutes(10), 3);
+                LocalDateTime.parse("2000-12-11T21:21:21"), Duration.ofMinutes(10), 3);
         historyManager.addTaskInHistory(task1);
         historyManager.addTaskInHistory(task2);
         historyManager.addTaskInHistory(task3);

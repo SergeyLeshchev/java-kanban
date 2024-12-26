@@ -1,3 +1,8 @@
+package httphandler;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.sun.net.httpserver.HttpServer;
 import data.Epic;
 import data.Status;
 import data.Subtask;
@@ -5,10 +10,22 @@ import data.Task;
 import manager.Managers;
 import manager.TaskManager;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-public class Main {
+public class HttpTaskServer {
+    private final HttpServer httpServer;
+    private static final int PORT = 8080;
+    private final TaskManager taskManager;
+    private static final Gson gson = createGson();
+
+    public HttpTaskServer(TaskManager taskManager) throws IOException {
+        httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
+        this.taskManager = taskManager;
+    }
+
     public static void main(String[] args) {
         // Образец задач для использования в разработке
         TaskManager taskManager = Managers.getDefaultTaskManager();
@@ -72,5 +89,35 @@ public class Main {
         for (Task task : taskManager.getHistory()) {
             System.out.println(task);
         }
+    }
+
+    public void start() {
+        httpServer.createContext("/tasks", new TaskHttpHandler(taskManager, gson));
+        httpServer.createContext("/epics", new EpicHttpHandler(taskManager, gson));
+        httpServer.createContext("/subtasks", new SubtaskHttpHandler(taskManager, gson));
+        httpServer.createContext("/history", new HistoryHttpHandler(taskManager, gson));
+        httpServer.createContext("/prioritized", new PrioritizedHttpHandler(taskManager, gson));
+        httpServer.start();
+        System.out.println("Сервер запущен");
+    }
+
+    public void stop() {
+        httpServer.stop(0);
+        System.out.println("Сервер остановлен");
+    }
+
+    public static Gson getGson() {
+        return gson;
+    }
+
+    private static Gson createGson() {
+        return new GsonBuilder()
+                .serializeNulls()
+                // Если закомментировать следующую строку с TaskAdapter, то не работает сериализация списка
+                // истории и приоритетных задач в json и обратно
+                .registerTypeAdapter(Task.class, new TaskAdapter())
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
     }
 }
